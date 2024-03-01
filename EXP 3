@@ -1,0 +1,56 @@
+from collections import deque
+
+class State:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+    def __eq__(self, other):
+        return self.x == other.x and self.y == other.y
+
+    def __hash__(self):
+        return hash((self.x, self.y))
+
+    def __str__(self):
+        return f"({self.x}, {self.y})"
+
+def is_valid_state(state):
+    return state.x >= 0 and state.y >= 0 and state.x <= 4 and state.y <= 3
+
+def water_jug_bfs():
+    start_state = State(0, 0)
+    visited = set()
+    queue = deque([start_state])
+
+    while queue:
+        current_state = queue.popleft()
+        visited.add(current_state)
+
+        if current_state.x == 2:
+            return current_state
+
+        operations = [(4, current_state.y), (current_state.x, 3),
+                      (0, current_state.y), (current_state.x, 0),
+                      (current_state.x - min(current_state.x, 3 - current_state.y),
+                       current_state.y + min(current_state.x, 3 - current_state.y)),
+                      (current_state.x + min(current_state.y, 4 - current_state.x),
+                       current_state.y - min(current_state.y, 4 - current_state.x))]
+
+        for operation in operations:
+            next_state = State(operation[0], operation[1])
+
+            if next_state not in visited and is_valid_state(next_state):
+                queue.append(next_state)
+                visited.add(next_state)
+
+    return None
+
+def main():
+    result = water_jug_bfs()
+    if result:
+        print("Solution found:", result)
+    else:
+        print("Solution not found!")
+
+if __name__ == "__main__":
+    main()
